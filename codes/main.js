@@ -1,5 +1,82 @@
 // Common JavaScript Functions
 
+(function initializeApiRouting() {
+    if (window.__API_ROUTING_READY__) return;
+
+    const normalizeBase = (value) => String(value || '').trim().replace(/\/+$/, '');
+    const apiBase = normalizeBase(
+        window.API_BASE_URL ||
+        window.APP_API_BASE_URL ||
+        localStorage.getItem('API_BASE_URL') ||
+        document.querySelector('meta[name="api-base-url"]')?.getAttribute('content') ||
+        ''
+    );
+
+    const rewritePhpUrl = (urlValue) => {
+        if (!urlValue || typeof urlValue !== 'string') return urlValue;
+
+        if (/^(data:|blob:|mailto:|tel:)/i.test(urlValue)) return urlValue;
+
+        if (/^https?:\/\//i.test(urlValue)) {
+            try {
+                const parsed = new URL(urlValue);
+                const isSameOrigin = parsed.origin === window.location.origin;
+                if (!isSameOrigin || !apiBase) return urlValue;
+
+                const pathname = parsed.pathname.replace(/^\/+/, '');
+                const relativePath = pathname.startsWith('codes/') ? pathname.slice(6) : pathname;
+                if (!/^php\//i.test(relativePath)) return urlValue;
+
+                return `${apiBase}/${relativePath}${parsed.search}${parsed.hash}`;
+            } catch (_) {
+                return urlValue;
+            }
+        }
+
+        const trimmed = urlValue.replace(/^\.\//, '').replace(/^\/+/, '');
+        const relativePath = trimmed.startsWith('codes/') ? trimmed.slice(6) : trimmed;
+        if (!/^php\//i.test(relativePath)) return urlValue;
+
+        if (!apiBase) return urlValue;
+        return `${apiBase}/${relativePath}`;
+    };
+
+    window.buildApiUrl = function (urlValue) {
+        return rewritePhpUrl(urlValue);
+    };
+
+    if (typeof window.fetch === 'function') {
+        const originalFetch = window.fetch.bind(window);
+        window.fetch = function (input, init) {
+            if (typeof input === 'string') {
+                return originalFetch(rewritePhpUrl(input), init);
+            }
+            if (input instanceof Request) {
+                const nextUrl = rewritePhpUrl(input.url);
+                if (nextUrl !== input.url) {
+                    return originalFetch(new Request(nextUrl, input), init);
+                }
+            }
+            return originalFetch(input, init);
+        };
+    }
+
+    if (window.jQuery && typeof window.jQuery.ajaxPrefilter === 'function') {
+        window.jQuery.ajaxPrefilter(function (options) {
+            if (options && typeof options.url === 'string') {
+                options.url = rewritePhpUrl(options.url);
+            }
+        });
+    }
+
+    if (window.location.hostname.endsWith('vercel.app') && !apiBase) {
+        console.warn('API base URL is not set. Configure API_BASE_URL to your hosted PHP backend, e.g. localStorage.setItem("API_BASE_URL", "https://your-backend.example.com/codes")');
+    }
+
+    window.__API_BASE_URL__ = apiBase;
+    window.__API_ROUTING_READY__ = true;
+})();
+
 // Show notification function (uses SweetAlert2 when available)
 function showNotification(message, type = 'info') {
     // Prefer SweetAlert2 for a modern modal-style notification
