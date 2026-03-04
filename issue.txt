@@ -1,0 +1,91 @@
+Issue:
+
+in admin:
+menu & recipe nav: if both click it turns blue. make it just hover
+
+how do users change role?.
+
+In Request nav, there's a table there add a gap in bottom of top table
+to make the bottom table not so close to top
+
+in Temporary staff account. 
+
+why there's a activate/deactive in  temporary account status. why not the admin just log out as a
+staff? and why there's a three boxes, record sales, adjust stocks and print
+reciept? admin can do that inside the staff interface the printing the adjust stock
+and print reciept. so my perspective is remove the three boxes cause it was like unecessary.
+
+The flow is the admin already have a account staff in database so when click the temporary staff account button its 
+automatically log in as the staff in staff interface, So he can perform what staff can do if there's out of staff.
+
+
+in recipe control the edit actions wont work
+
+Fix all under the development input
+
+
+remember that admin have all the control.
+
+
+in staff:
+if the menu is unavailable it will not be show in menu sales.
+
+	
+
+=========New Issue=========
+Need to have an output example:
+
+Admin Role:
+
+Dashborad
+-Recent System Activity ✅
+
+Menu items
+-Masterlist the action edit ✅
+-Add Menu Items ✅
+
+Recipe control
+-Assign new recipe need to have an input ✅
+-Actions Buttons ✅
+
+Ingredients
+-Page Set thresholds button ✅
+-Add Ingredients ✅
+-Action Buttons ✅
+
+Users 
+-Add Users (Modal) ✅
+-Action Buttons ✅
+
+Login Page
+-Rqst Fix ✅
+
+
+Request 
+-the request is empty need atleast an example output design ✅
+
+Owners Report 
+-Page Overview graph need atleast sample output design✅
+-Buttons (Generate, Print, Excel)✅
+-Summary Metrics✅
+-Detailed Transaction Log✅
+
+
+Backup & restore 
+-page need atleast output ui in create manual backup button
+backup history log atleast some example output design
+-Full activity log page, comprehensive logs table atleast show some output
+design example. and truncate the  details  because its long possible
+sentence so when user click the row its have a modal to show a full info
+
+
+
+Staff role:
+On the Receipts page, there should be some example output showing today’s transactions.
+
+Clicking a row in the today’s transactions table should display a receipt preview.
+
+When a user clicks “Record Sale” from the Menu Sales, it should first open the Receipts page to show the receipt for 
+confirmation before finalizing the sale.
+
+

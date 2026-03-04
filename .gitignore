@@ -1,0 +1,17 @@
+*.log
+
+# Secure configuration - NEVER commit this
+codes/php/config.php
+
+# Copilot local history/metadata
+.lh/
+
+# Office temp files
+~$*.docx
+
+# Backup files with sensitive data
+codes/resources/backups/
+
+# Text files with credentials
+users auth.txt
+test.txt

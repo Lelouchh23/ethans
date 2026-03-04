@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Users - Admin Dashboard</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+    <script>
+        // Immediate Sidebar State Initialization
+        (function () {
+            const html = document.documentElement;
+            html.classList.add('initializing');
+
+            const sidebarState = localStorage.getItem('sidebarActive');
+            if (sidebarState === 'true' && window.innerWidth >= 992) {
+                html.classList.add('sidebar-active');
+            }
+
+            // Auth Guard
+            try {
+                const role = localStorage.getItem('loggedInRole');
+                if (role !== 'admin' && role !== 'owner') {
+                    window.location.href = 'index.html';
+                }
+            } catch (e) {
+                window.location.href = 'index.html';
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top shadow">
+        <div class="container-fluid">
+            <button class="sidebar-toggle mt-1 me-2" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headerNav">
+                <span class="fas fa-ellipsis-v"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="headerNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-shield me-1"></i>Administrator
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 animate__animated animate__fadeIn">
+                            <li><a class="dropdown-item" href="admin-system-settings.html"><i
+                                        class="fas fa-cog me-2 text-danger"></i>Settings</a></li>
+                            <li><a class="dropdown-item" href="admin-activity-log.html"><i
+                                        class="fas fa-history me-2 text-danger"></i>Activity Log</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="#" id="logoutBtn"><i
+                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-branding">
+                <button class="sidebar-toggle in-sidebar" id="sidebarToggleInternal">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="admin-dashboard.html" class="sidebar-brand-group">
+                    <img src="resources/ethans logo.jpg" alt="Logo">
+                    <span class="pos-label">POS</span>
+                </a>
+            </div>
+            <div class="sidebar-nav">
+                <div class="sidebar-section-title">Navigation</div>
+                <a href="admin-dashboard.html" class="sidebar-link">
+                    <i class="fas fa-tachometer-alt"></i>Dashboard
+                </a>
+                <a href="admin-menu-control.html" class="sidebar-link">
+                    <i class="fas fa-utensils"></i>Menu Control
+                </a>
+                <a href="admin-recipe-control.html" class="sidebar-link">
+                    <i class="fas fa-book"></i>Recipe Control
+                </a>
+                <a href="admin-ingredients-masterlist.html" class="sidebar-link">
+                    <i class="fas fa-boxes"></i>Ingredients
+                </a>
+                <a href="admin-menu_customization.html" class="sidebar-link">
+                    <i class="fas fa-palette"></i>Menu Customization
+                </a>
+                <a href="admin-user-management.html" class="sidebar-link">
+                    <i class="fas fa-users"></i>Users
+                </a>
+                <a href="admin-requests.html" class="sidebar-link">
+                    <i class="fas fa-inbox"></i>Requests
+                </a>
+
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-section-title">Reports & Data</div>
+                <a href="admin-reports.html" class="sidebar-link">
+                    <i class="fas fa-chart-bar"></i>Owner Reports
+                </a>
+                <a href="admin-backup.html" class="sidebar-link">
+                    <i class="fas fa-database"></i>Backup & Restore
+                </a>
+
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-section-title">System</div>
+                <a href="admin-system-settings.html" class="sidebar-link">
+                    <i class="fas fa-cog"></i>System Settings
+                </a>
+                <a href="admin-activity-log.html" class="sidebar-link">
+                    <i class="fas fa-history"></i>Full Activity Log
+                </a>
+                <a href="admin-active-users.html" class="sidebar-link active">
+                    <i class="fas fa-user-check"></i>Active Users
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Active Users Content -->
+            <div id="active-users-content" class="page-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-user-check me-2 text-danger"></i>Active Users</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button class="btn btn-sm btn-outline-danger" id="refreshActiveUsers">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card shadow border-left-success py-2 h-100">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Currently Active</div>
+                                        <div class="h5 mb-0 font-weight-bold" id="activeCount">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-users fa-2x text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card shadow border-left-primary py-2 h-100">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Admin Sessions</div>
+                                        <div class="h5 mb-0 font-weight-bold" id="adminCount">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-user-shield fa-2x text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card shadow border-left-info py-2 h-100">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Staff Sessions</div>
+                                        <div class="h5 mb-0 font-weight-bold" id="staffCount">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-user fa-2x text-info"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Users Table -->
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-black text-white px-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold"><i class="fas fa-desktop me-1"></i>Active Sessions</h6>
+                        <span class="badge bg-success" id="lastUpdated">Last updated: --</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle" id="activeUsersTable">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Role</th>
+                                        <th>IP Address</th>
+                                        <th>Login Time</th>
+                                        <th>Last Activity</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <i class="fas fa-spinner fa-spin me-2"></i>Loading active users...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Session Activity Log -->
+                <div class="card shadow">
+                    <div class="card-header bg-black text-white">
+                        <h6 class="m-0 font-weight-bold"><i class="fas fa-history me-1"></i>Recent Session Activity</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-timeline" id="sessionActivity">
+                            <p class="text-center text-muted py-4">Loading session activity...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Force Logout Modal -->
+    <div class="modal fade" id="forceLogoutModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-sign-out-alt me-2"></i>Force Logout User</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to force logout <strong id="forceLogoutUserName">this user</strong>?</p>
+                    <p class="text-muted small">This will immediately terminate their session.</p>
+                    <div class="mb-3">
+                        <label class="form-label">Reason (optional)</label>
+                        <input type="text" class="form-control" id="forceLogoutReason" placeholder="e.g., Security concern">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmForceLogout">Force Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Custom JS -->
+    <script src="main.js"></script>
+    <script src="admin.js"></script>
+
+    <script>
+        // Active Users Page Scripts
+        const NOTIFICATIONS_API = 'php/notifications.php';
+        let currentSessionToLogout = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadActiveUsers();
+            
+            // Refresh button
+            document.getElementById('refreshActiveUsers')?.addEventListener('click', loadActiveUsers);
+            
+            // Confirm force logout
+            document.getElementById('confirmForceLogout')?.addEventListener('click', performForceLogout);
+            
+            // Auto-refresh every 30 seconds
+            setInterval(loadActiveUsers, 30000);
+        });
+
+        async function loadActiveUsers() {
+            const tbody = document.querySelector('#activeUsersTable tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4"><i class="fas fa-spinner fa-spin me-2"></i>Loading...</td></tr>';
+
+            try {
+                const response = await fetch(`${NOTIFICATIONS_API}?action=active_users`);
+                const data = await response.json();
+
+                if (!data.success || !data.users) {
+                    throw new Error('Failed to load active users');
+                }
+
+                const users = data.users;
+                
+                // Update counts
+                document.getElementById('activeCount').textContent = users.length;
+                document.getElementById('adminCount').textContent = users.filter(u => u.role?.toLowerCase() === 'admin' || u.role?.toLowerCase() === 'owner').length;
+                document.getElementById('staffCount').textContent = users.filter(u => u.role?.toLowerCase() === 'staff' || u.role?.toLowerCase() === 'cashier').length;
+                document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted"><i class="fas fa-user-slash me-2"></i>No active users</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = users.map(user => {
+                    const loginTime = user.login_time ? new Date(user.login_time).toLocaleString() : 'Unknown';
+                    const lastActivity = user.last_activity ? new Date(user.last_activity).toLocaleString() : 'Unknown';
+                    const isRecent = user.last_activity && (Date.now() - new Date(user.last_activity).getTime()) < 300000; // 5 minutes
+                    
+                    return `
+                        <tr class="animate__animated animate__fadeIn">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle bg-danger text-white me-2">
+                                        ${user.full_name?.charAt(0) || 'U'}
+                                    </div>
+                                    <div>
+                                        <strong>${user.full_name || 'Unknown'}</strong>
+                                        <br><small class="text-muted">@${user.username || ''}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge ${user.role?.toLowerCase() === 'admin' ? 'bg-primary' : 'bg-secondary'}">${user.role || 'Unknown'}</span></td>
+                            <td><code>${user.ip_address || 'N/A'}</code></td>
+                            <td><small>${loginTime}</small></td>
+                            <td><small>${lastActivity}</small></td>
+                            <td>
+                                <span class="badge ${isRecent ? 'bg-success' : 'bg-warning'}">
+                                    <i class="fas fa-circle me-1" style="font-size: 8px;"></i>
+                                    ${isRecent ? 'Active' : 'Idle'}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger" onclick="showForceLogoutModal(${user.session_id}, '${user.full_name}')" title="Force Logout">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                loadSessionActivity();
+
+            } catch (error) {
+                console.error('Failed to load active users:', error);
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Failed to load active users</td></tr>';
+            }
+        }
+
+        async function loadSessionActivity() {
+            const activityDiv = document.getElementById('sessionActivity');
+            if (!activityDiv) return;
+
+            try {
+                // Get recent login activities
+                const response = await fetch('php/app.php?table=activity_logs&limit=10');
+                const logs = await response.json();
+
+                if (!logs || logs.length === 0) {
+                    activityDiv.innerHTML = '<p class="text-center text-muted py-3">No recent activity</p>';
+                    return;
+                }
+
+                const loginLogs = logs.filter(l => l.action?.includes('Login') || l.action?.includes('Logout')).slice(0, 8);
+
+                if (loginLogs.length === 0) {
+                    activityDiv.innerHTML = '<p class="text-center text-muted py-3">No recent session activity</p>';
+                    return;
+                }
+
+                activityDiv.innerHTML = loginLogs.map(log => {
+                    const isLogin = log.action?.includes('Login');
+                    const time = log.created_at ? new Date(log.created_at).toLocaleString() : '';
+                    return `
+                        <div class="activity-item d-flex align-items-start mb-3">
+                            <div class="activity-icon ${isLogin ? 'bg-success' : 'bg-secondary'} text-white rounded-circle p-2 me-3">
+                                <i class="fas ${isLogin ? 'fa-sign-in-alt' : 'fa-sign-out-alt'}"></i>
+                            </div>
+                            <div class="activity-content">
+                                <strong>${log.action}</strong>
+                                <p class="mb-0 text-muted small">${log.reference || ''}</p>
+                                <small class="text-muted">${time} • ${log.ip_address || ''}</small>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Failed to load session activity:', error);
+            }
+        }
+
+        function showForceLogoutModal(sessionId, userName) {
+            currentSessionToLogout = sessionId;
+            document.getElementById('forceLogoutUserName').textContent = userName;
+            document.getElementById('forceLogoutReason').value = '';
+            new bootstrap.Modal(document.getElementById('forceLogoutModal')).show();
+        }
+
+        async function performForceLogout() {
+            if (!currentSessionToLogout) return;
+
+            const reason = document.getElementById('forceLogoutReason').value;
+
+            try {
+                // Update session to inactive
+                const response = await fetch('php/app.php', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        table: 'user_sessions',
+                        id: currentSessionToLogout,
+                        is_active: false
+                    })
+                });
+
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('forceLogoutModal')).hide();
+                    Swal.fire('Success', 'User has been logged out', 'success');
+                    loadActiveUsers();
+                } else {
+                    throw new Error('Failed to force logout');
+                }
+
+            } catch (error) {
+                console.error('Force logout failed:', error);
+                Swal.fire('Error', 'Failed to force logout user', 'error');
+            }
+        }
+    </script>
+
+    <style>
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+    </style>
+</body>
+
+</html>

@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings - Admin Dashboard</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        /* Settings Tab Styles */
+        #settingsTabs .nav-link {
+            color: #333;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        #settingsTabs .nav-link:hover {
+            background-color: #f0f0f0;
+            color: #800000;
+        }
+        #settingsTabs .nav-link.active {
+            background-color: #800000;
+            color: #fff;
+        }
+        #settingsTabs .nav-link i {
+            width: 20px;
+        }
+        .tab-content {
+            min-height: 400px;
+        }
+        @media (max-width: 767.98px) {
+            #settingsTabs {
+                flex-direction: row !important;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 0 !important;
+            }
+            #settingsTabs .nav-link {
+                white-space: nowrap;
+                margin-bottom: 0 !important;
+                margin-right: 8px;
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+            #settingsTabs .nav-link i {
+                display: none;
+            }
+        }
+    </style>
+    <script>
+        // Immediate Sidebar State Initialization
+        (function () {
+            const html = document.documentElement;
+            html.classList.add('initializing');
+
+            const sidebarState = localStorage.getItem('sidebarActive');
+            if (sidebarState === 'true' && window.innerWidth >= 992) {
+                html.classList.add('sidebar-active');
+            }
+
+            // Auth Guard (Admin/Owner version)
+            try {
+                const role = localStorage.getItem('loggedInRole');
+                if (role !== 'admin' && role !== 'owner') {
+                    window.location.href = 'index.html';
+                }
+            } catch (e) {
+                window.location.href = 'index.html';
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top shadow">
+        <div class="container-fluid">
+            <button class="sidebar-toggle mt-1 me-2" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headerNav">
+                <span class="fas fa-ellipsis-v"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="headerNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-shield me-1"></i>Administrator
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 animate__animated animate__fadeIn">
+                            <li><a class="dropdown-item active" href="admin-system-settings.html"><i
+                                        class="fas fa-cog me-2 text-danger"></i>Settings</a></li>
+                            <li><a class="dropdown-item" href="admin-activity-log.html"><i
+                                        class="fas fa-history me-2 text-danger"></i>Activity Log</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="#" id="logoutBtn"><i
+                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-branding">
+                <button class="sidebar-toggle in-sidebar" id="sidebarToggleInternal">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="admin-dashboard.html" class="sidebar-brand-group">
+                    <img src="resources/ethans logo.jpg" alt="Logo">
+                    <span class="pos-label">POS</span>
+                </a>
+            </div>
+            <div class="sidebar-nav">
+                <div class="sidebar-section-title">Navigation</div>
+                <a href="admin-dashboard.html" class="sidebar-link">
+                    <i class="fas fa-tachometer-alt"></i>Dashboard
+                </a>
+                <a href="admin-menu-control.html" class="sidebar-link">
+                    <i class="fas fa-utensils"></i>Menu Control
+                </a>
+                <a href="admin-recipe-control.html" class="sidebar-link">
+                    <i class="fas fa-book"></i>Recipe Control
+                </a>
+                <a href="admin-ingredients-masterlist.html" class="sidebar-link">
+                    <i class="fas fa-boxes"></i>Ingredients
+                </a>
+                <a href="admin-menu_customization.html" class="sidebar-link">
+                    <i class="fas fa-palette"></i>Menu Customization
+                </a>
+                <a href="admin-user-management.html" class="sidebar-link">
+                    <i class="fas fa-users"></i>Users
+                </a>
+                <a href="admin-requests.html" class="sidebar-link">
+                    <i class="fas fa-inbox"></i>Requests
+                </a>
+
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-section-title">Reports & Data</div>
+                <a href="admin-reports.html" class="sidebar-link">
+                    <i class="fas fa-chart-bar"></i>Owner Reports
+                </a>
+                <a href="admin-backup.html" class="sidebar-link">
+                    <i class="fas fa-database"></i>Backup & Restore
+                </a>
+
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-section-title">System</div>
+                <a href="admin-system-settings.html" class="sidebar-link active">
+                    <i class="fas fa-cog"></i>System Settings
+                </a>
+                <a href="admin-activity-log.html" class="sidebar-link">
+                    <i class="fas fa-history"></i>Full Activity Log
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- System Settings Content -->
+            <div id="system-settings-content" class="page-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-cog me-2 text-danger"></i>System Settings</h1>
+                    <button type="button" class="btn btn-danger" id="saveAllSettingsBtn">
+                        <i class="fas fa-save me-1"></i> Save All Settings
+                    </button>
+                </div>
+
+                <!-- Tabbed Interface -->
+                <div class="card shadow">
+                    <div class="card-body p-0">
+                        <div class="row g-0">
+                            <!-- Vertical Tab Navigation -->
+                            <div class="col-md-3 col-lg-2 border-end bg-light">
+                                <div class="nav flex-column nav-pills p-3" id="settingsTabs" role="tablist">
+                                    <button class="nav-link active text-start mb-2" id="tab-profile" data-bs-toggle="pill" data-bs-target="#panel-profile" type="button">
+                                        <i class="fas fa-store me-2"></i>Restaurant Profile
+                                    </button>
+                                    <button class="nav-link text-start mb-2" id="tab-general" data-bs-toggle="pill" data-bs-target="#panel-general" type="button">
+                                        <i class="fas fa-cogs me-2"></i>General Config
+                                    </button>
+                                    <button class="nav-link text-start mb-2" id="tab-pos" data-bs-toggle="pill" data-bs-target="#panel-pos" type="button">
+                                        <i class="fas fa-cash-register me-2"></i>POS / Cashier
+                                    </button>
+                                    <button class="nav-link text-start mb-2" id="tab-inventory" data-bs-toggle="pill" data-bs-target="#panel-inventory" type="button">
+                                        <i class="fas fa-boxes me-2"></i>Inventory & Alerts
+                                    </button>
+                                    <button class="nav-link text-start" id="tab-refund" data-bs-toggle="pill" data-bs-target="#panel-refund" type="button">
+                                        <i class="fas fa-undo-alt me-2"></i>Refund & Void
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Tab Content Panels -->
+                            <div class="col-md-9 col-lg-10">
+                                <div class="tab-content p-4" id="settingsTabContent">
+                                    
+                                    <!-- Restaurant Profile Panel -->
+                                    <div class="tab-pane fade show active" id="panel-profile" role="tabpanel">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <h5 class="mb-0"><i class="fas fa-store me-2 text-danger"></i>Restaurant Profile</h5>
+                                            <button type="button" class="btn btn-danger btn-sm" id="saveRestProfileBtn">
+                                                <i class="fas fa-save me-1"></i> Save Profile
+                                            </button>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-8">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">Restaurant Name</label>
+                                                        <input type="text" class="form-control" id="restName" value="Ethan's Caffe & Restaurant">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">Contact Number</label>
+                                                        <input type="text" class="form-control" id="restContact" value="+63 123 456 7890">
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <label class="form-label fw-semibold">Address</label>
+                                                        <textarea class="form-control" id="restAddress" rows="2">123 Street Block, City Name</textarea>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">TIN Number</label>
+                                                        <input type="text" class="form-control" id="restTin" value="000-111-222-333">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">Store Logo</label>
+                                                        <input type="file" class="form-control" id="restLogo">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 text-center mt-4 mt-lg-0">
+                                                <div class="border rounded p-4 bg-light">
+                                                    <img src="resources/ethans logo.jpg" alt="Logo" class="rounded mb-3" style="max-height: 120px;">
+                                                    <p class="text-muted small mb-0">Current Store Logo</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- General Configuration Panel -->
+                                    <div class="tab-pane fade" id="panel-general" role="tabpanel">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <h5 class="mb-0"><i class="fas fa-cogs me-2 text-danger"></i>General Configuration</h5>
+                                            <button type="button" class="btn btn-danger btn-sm" id="saveSystemConfigBtn">
+                                                <i class="fas fa-save me-1"></i> Save Config
+                                            </button>
+                                        </div>
+                                        <div class="row g-4">
+                                            <!-- Currency & Tax -->
+                                            <div class="col-lg-6">
+                                                <div class="card border-0 bg-light h-100">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title fw-bold mb-3"><i class="fas fa-coins me-2 text-warning"></i>Currency & Tax</h6>
+                                                        <div class="row g-3">
+                                                            <div class="col-6">
+                                                                <label class="form-label small text-muted">Currency Symbol</label>
+                                                                <input type="text" class="form-control" id="setting_currency_symbol" value="P">
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <label class="form-label small text-muted">Tax Rate (%)</label>
+                                                                <input type="number" class="form-control" id="setting_tax_rate" step="0.01" value="12">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Security -->
+                                            <div class="col-lg-6">
+                                                <div class="card border-0 bg-light h-100">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title fw-bold mb-3"><i class="fas fa-shield-alt me-2 text-primary"></i>Security</h6>
+                                                        <label class="form-label small text-muted">Auto logout after (minutes)</label>
+                                                        <input type="number" class="form-control" id="setting_auto_logout_minutes" value="30" min="5" max="120">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Transaction Settings -->
+                                            <div class="col-12">
+                                                <div class="card border-0 bg-light">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title fw-bold mb-3"><i class="fas fa-exchange-alt me-2 text-info"></i>Transaction Settings</h6>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-check form-switch mb-3">
+                                                                    <input class="form-check-input" type="checkbox" id="setting_allow_order_modification" checked>
+                                                                    <label class="form-check-label" for="setting_allow_order_modification">
+                                                                        Allow staff to modify orders after printing
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-check form-switch mb-3">
+                                                                    <input class="form-check-input" type="checkbox" id="setting_require_manager_void" checked>
+                                                                    <label class="form-check-label" for="setting_require_manager_void">
+                                                                        Require manager approval for voiding items
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- POS / Cashier Panel -->
+                                    <div class="tab-pane fade" id="panel-pos" role="tabpanel">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <h5 class="mb-0"><i class="fas fa-cash-register me-2 text-danger"></i>POS / Cashier Settings</h5>
+                                            <button type="button" class="btn btn-danger btn-sm" id="savePosSettingsBtn">
+                                                <i class="fas fa-save me-1"></i> Save POS Settings
+                                            </button>
+                                        </div>
+                                        <div class="row g-4">
+                                            <!-- Checkout Options -->
+                                            <div class="col-lg-6">
+                                                <div class="card border-0 bg-light h-100">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title fw-bold mb-3"><i class="fas fa-shopping-cart me-2 text-success"></i>Checkout Options</h6>
+                                                        <div class="form-check form-switch mb-3">
+                                                            <input class="form-check-input" type="checkbox" id="setting_enable_discount">
+                                                            <label class="form-check-label" for="setting_enable_discount">
+                                                                Enable Discount Button
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check form-switch mb-3">
+                                                            <input class="form-check-input" type="checkbox" id="setting_enable_coupon">
+                                                            <label class="form-check-label" for="setting_enable_coupon">
+                                                                Enable Coupon Button
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" id="setting_auto_print_receipt">
+                                                            <label class="form-check-label" for="setting_auto_print_receipt">
+                                                                Auto-print receipt on checkout
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Hold Order Settings -->
+                                            <div class="col-lg-6">
+                                                <div class="card border-0 bg-light h-100">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title fw-bold mb-3"><i class="fas fa-pause-circle me-2 text-warning"></i>Hold Order Settings</h6>
+                                                        <label class="form-label small text-muted">Hold order expiry (hours)</label>
+                                                        <div class="input-group">
+                                                            <input type="number" class="form-control" id="setting_hold_order_expiry_hours" value="5" min="1" max="48">
+                                                            <span class="input-group-text">hours</span>
+                                                        </div>
+                                                        <small class="text-muted mt-2 d-block">Orders held longer than this will expire automatically.</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Inventory & Alerts Panel -->
+                                    <div class="tab-pane fade" id="panel-inventory" role="tabpanel">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <h5 class="mb-0"><i class="fas fa-boxes me-2 text-danger"></i>Inventory & Alerts</h5>
+                                            <button type="button" class="btn btn-danger btn-sm" id="saveInventorySettingsBtn">
+                                                <i class="fas fa-save me-1"></i> Save Inventory Settings
+                                            </button>
+                                        </div>
+                                        <div class="row g-4">
+                                            <!-- Stock Alerts -->
+                                            <div class="col-lg-6">
+                                                <div class="card border-0 bg-light h-100">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title fw-bold mb-3"><i class="fas fa-exclamation-triangle me-2 text-danger"></i>Stock Alerts</h6>
+                                                        <div class="mb-3">
+                                                            <label class="form-label small text-muted">Expiry warning (days before)</label>
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control" id="setting_expiry_warning_days" value="7" min="1" max="90">
+                                                                <span class="input-group-text">days</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Notifications -->
+                                            <div class="col-lg-6">
+                                                <div class="card border-0 bg-light h-100">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title fw-bold mb-3"><i class="fas fa-bell me-2 text-info"></i>Notifications</h6>
+                                                        <div class="form-check form-switch mb-3">
+                                                            <input class="form-check-input" type="checkbox" id="setting_enable_email_notifications">
+                                                            <label class="form-check-label" for="setting_enable_email_notifications">
+                                                                Enable email notifications
+                                                            </label>
+                                                        </div>
+                                                        <small class="text-muted d-block">Receive alerts via email for low stock and expiring items.</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Refund & Void Panel -->
+                                    <div class="tab-pane fade" id="panel-refund" role="tabpanel">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <h5 class="mb-0"><i class="fas fa-undo-alt me-2 text-danger"></i>Refund & Void Settings</h5>
+                                            <button type="button" class="btn btn-danger btn-sm" id="saveRefundSettingsBtn">
+                                                <i class="fas fa-save me-1"></i> Save Refund Settings
+                                            </button>
+                                        </div>
+                                        <div class="row g-4">
+                                            <!-- Refund Options -->
+                                            <div class="col-lg-6">
+                                                <div class="card border-0 bg-light h-100">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title fw-bold mb-3"><i class="fas fa-hand-holding-usd me-2 text-success"></i>Refund Options</h6>
+                                                        <div class="form-check form-switch mb-3">
+                                                            <input class="form-check-input" type="checkbox" id="setting_allow_partial_refund">
+                                                            <label class="form-check-label" for="setting_allow_partial_refund">
+                                                                Allow partial refund (item-level)
+                                                            </label>
+                                                        </div>
+                                                        <label class="form-label small text-muted">Refund time limit (hours after sale)</label>
+                                                        <div class="input-group">
+                                                            <input type="number" class="form-control" id="setting_refund_time_limit_hours" value="24" min="1" max="168">
+                                                            <span class="input-group-text">hours</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Void Options -->
+                                            <div class="col-lg-6">
+                                                <div class="card border-0 bg-light h-100">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title fw-bold mb-3"><i class="fas fa-ban me-2 text-danger"></i>Void Options</h6>
+                                                        <div class="form-check form-switch mb-3">
+                                                            <input class="form-check-input" type="checkbox" id="setting_require_reason_for_void">
+                                                            <label class="form-check-label" for="setting_require_reason_for_void">
+                                                                Require reason for void
+                                                            </label>
+                                                        </div>
+                                                        <small class="text-muted d-block">Staff must provide a reason when voiding transactions.</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Alert -->
+                <div class="alert alert-info mt-4 d-flex align-items-center">
+                    <i class="fas fa-info-circle me-3 fa-lg"></i>
+                    <div>
+                        <strong>Note:</strong> Changes to settings take effect immediately for all users. Toggle settings use true/false values, and all settings are stored in the database.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Custom JS -->
+    <script src="main.js"></script>
+    <script src="admin.js"></script>
+
+    <script>
+        // System Settings Page Logic
+        // Note: systemSettingsDB is already defined in admin.js
+        let settingsPageData = {};
+
+        // Loading modal helpers (defined here since admin.js doesn't have them)
+        function showSettingsLoading(message = 'Loading...') {
+            Swal.fire({
+                title: message,
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+        }
+
+        function hideSettingsLoading() {
+            Swal.close();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllSettings();
+
+            // Save button listeners with descriptive labels
+            document.getElementById('saveSystemConfigBtn')?.addEventListener('click', () => saveSettingsGroup(['currency_symbol', 'tax_rate', 'allow_order_modification', 'require_manager_void', 'auto_logout_minutes'], 'General Configuration'));
+            document.getElementById('savePosSettingsBtn')?.addEventListener('click', () => saveSettingsGroup(['enable_discount', 'enable_coupon', 'auto_print_receipt', 'hold_order_expiry_hours'], 'POS / Cashier Settings'));
+            document.getElementById('saveInventorySettingsBtn')?.addEventListener('click', () => saveSettingsGroup(['expiry_warning_days', 'enable_email_notifications'], 'Inventory & Alerts'));
+            document.getElementById('saveRefundSettingsBtn')?.addEventListener('click', () => saveSettingsGroup(['allow_partial_refund', 'refund_time_limit_hours', 'require_reason_for_void'], 'Refund & Void Settings'));
+            document.getElementById('saveAllSettingsBtn')?.addEventListener('click', saveAllSettings);
+            document.getElementById('saveRestProfileBtn')?.addEventListener('click', saveRestaurantProfile);
+        });
+
+        async function loadAllSettings() {
+            showSettingsLoading('Loading settings...');
+            try {
+                const settings = await systemSettingsDB.show();
+                settings.forEach(s => {
+                    settingsPageData[s.key] = s.value;
+                    applySettingToUI(s.key, s.value);
+                    
+                    // Also apply restaurant profile fields
+                    if (s.key === 'restaurant_name' && document.getElementById('restName')) {
+                        document.getElementById('restName').value = s.value;
+                    }
+                    if (s.key === 'restaurant_address' && document.getElementById('restAddress')) {
+                        document.getElementById('restAddress').value = s.value;
+                    }
+                    if (s.key === 'restaurant_contact' && document.getElementById('restContact')) {
+                        document.getElementById('restContact').value = s.value;
+                    }
+                    if (s.key === 'restaurant_tin' && document.getElementById('restTin')) {
+                        document.getElementById('restTin').value = s.value;
+                    }
+                });
+                hideSettingsLoading();
+            } catch (err) {
+                hideSettingsLoading();
+                console.error('Failed to load settings:', err);
+                Swal.fire('Error', 'Failed to load system settings. Make sure the database table exists.', 'error');
+            }
+        }
+
+        function applySettingToUI(key, value) {
+            const element = document.getElementById('setting_' + key);
+            if (!element) return;
+
+            if (element.type === 'checkbox') {
+                element.checked = value === 'true';
+            } else {
+                element.value = value;
+            }
+        }
+
+        function getSettingFromUI(key) {
+            const element = document.getElementById('setting_' + key);
+            if (!element) return null;
+
+            if (element.type === 'checkbox') {
+                return element.checked ? 'true' : 'false';
+            } else {
+                return element.value;
+            }
+        }
+
+        async function saveSettingsGroup(keys, groupLabel = 'System Settings') {
+            showSettingsLoading('Saving settings...');
+
+            // Build a readable summary of changes
+            let changesDescription = [];
+
+            try {
+                for (const key of keys) {
+                    const value = getSettingFromUI(key);
+                    if (value !== null) {
+                        // Check if value actually changed
+                        const oldValue = settingsPageData[key];
+                        if (oldValue !== value) {
+                            const readableKey = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                            const readableValue = (value === 'true' || value === 'false') 
+                                ? (value === 'true' ? 'Enabled' : 'Disabled')
+                                : value;
+                            changesDescription.push(`${readableKey}: ${readableValue}`);
+                        }
+                        // Use edit with key as identifier for system_settings
+                        await systemSettingsDB.edit({ key: key, value: value, updated_at: new Date().toISOString() });
+                        settingsPageData[key] = value;
+                    }
+                }
+                hideSettingsLoading();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Settings Saved',
+                    text: 'Your settings have been updated successfully.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                if (typeof logAdminActivity === 'function') {
+                    const reference = changesDescription.length > 0 
+                        ? changesDescription.slice(0, 3).join(', ') + (changesDescription.length > 3 ? ` (+${changesDescription.length - 3} more)` : '')
+                        : 'No changes detected';
+                    logAdminActivity(`Updated ${groupLabel}`, reference, 'Success');
+                }
+            } catch (err) {
+                hideSettingsLoading();
+                console.error('Failed to save settings:', err);
+                Swal.fire('Error', 'Failed to save settings. Please try again.', 'error');
+            }
+        }
+
+        async function saveAllSettings() {
+            const allKeys = [
+                'currency_symbol', 'tax_rate', 'allow_order_modification', 'require_manager_void', 'auto_logout_minutes',
+                'enable_discount', 'enable_coupon', 'auto_print_receipt', 'hold_order_expiry_hours',
+                'expiry_warning_days', 'enable_email_notifications',
+                'allow_partial_refund', 'refund_time_limit_hours', 'require_reason_for_void'
+            ];
+            await saveSettingsGroup(allKeys, 'All System Settings');
+        }
+
+        async function saveRestaurantProfile() {
+            // Restaurant profile - save these as system settings too
+            const profileKeys = ['restaurant_name', 'restaurant_address', 'restaurant_contact', 'restaurant_tin'];
+            const profileValues = {
+                restaurant_name: document.getElementById('restName')?.value || '',
+                restaurant_address: document.getElementById('restAddress')?.value || '',
+                restaurant_contact: document.getElementById('restContact')?.value || '',
+                restaurant_tin: document.getElementById('restTin')?.value || ''
+            };
+
+            showSettingsLoading('Saving profile...');
+            try {
+                for (const key of profileKeys) {
+                    await systemSettingsDB.edit({ key: key, value: profileValues[key], updated_at: new Date().toISOString() });
+                }
+                hideSettingsLoading();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Profile Saved',
+                    text: 'Restaurant profile updated successfully.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                if (typeof logAdminActivity === 'function') {
+                    const restName = profileValues.restaurant_name || 'Unknown';
+                    logAdminActivity('Updated Restaurant Profile', `Name: ${restName}`, 'Success');
+                }
+            } catch (err) {
+                hideSettingsLoading();
+                console.error('Failed to save profile:', err);
+                Swal.fire('Error', 'Failed to save profile.', 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

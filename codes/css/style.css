@@ -1,0 +1,602 @@
+/* CSS Variables for Color Scheme */
+:root {
+    --maroon: #800000;
+    --green: #2e8b57;
+    --blue: #1e90ff;
+    --black: #222222;
+    --white: #ffffff;
+    --light-gray: #f8f9fa;
+    --dark-maroon: #660000;
+    --light-maroon: #993333;
+}
+
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--black);
+    background-color: var(--white);
+    transition: all 0.3s ease;
+}
+
+/* Login Page Background */
+.login-page {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../assets/bg-restaurant.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+}
+
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+/* Logo Styles */
+.logo-container {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+}
+
+.logo-img {
+    max-height: 80px;
+    transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+    transform: scale(1.05);
+}
+
+.logo-text {
+    color: var(--maroon);
+    font-weight: 700;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+}
+
+/* Card Styles */
+.login-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Button Styles */
+.btn-maroon {
+    background-color: var(--maroon);
+    border-color: var(--maroon);
+    color: var(--white);
+    transition: all 0.3s ease;
+}
+
+.btn-maroon:hover {
+    background-color: var(--dark-maroon);
+    border-color: var(--dark-maroon);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(128, 0, 0, 0.3);
+}
+
+.btn-green {
+    background-color: var(--green);
+    border-color: var(--green);
+    color: var(--white);
+    transition: all 0.3s ease;
+}
+
+.btn-green:hover {
+    background-color: #26734d;
+    border-color: #26734d;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 139, 87, 0.3);
+}
+
+.btn-blue {
+    background-color: var(--blue);
+    border-color: var(--blue);
+    color: var(--white);
+    transition: all 0.3s ease;
+}
+
+.btn-blue:hover {
+    background-color: #1a7adb;
+    border-color: #1a7adb;
+    transform: translateY(-2px);
+}
+
+/* Form Styles */
+.form-control,
+.form-select {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--maroon);
+    box-shadow: 0 0 0 0.25rem rgba(128, 0, 0, 0.25);
+}
+
+/* Nav Tabs */
+.nav-tabs .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 0;
+    padding: 12px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--white);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--maroon);
+    background-color: var(--white);
+    border: none;
+    font-weight: 600;
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.5s ease-out;
+}
+
+.slide-in-right {
+    animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .logo-text {
+        font-size: 1.4rem;
+    }
+
+    .login-card {
+        margin: 10px;
+    }
+
+    .btn-lg {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
+
+/* Add these to the existing style.css file */
+
+/* Admin-specific styles */
+.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Tab content animations */
+.tab-content>.tab-pane {
+    animation: fadeIn 0.3s ease-in;
+}
+
+/* Card hover effects for admin */
+.card.shadow {
+    transition: all 0.3s ease;
+}
+
+.card.shadow:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Table row highlight */
+.table-hover tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(220, 53, 69, 0.05);
+    transform: scale(1.002);
+}
+
+/* Form validation */
+.form-control:invalid,
+.form-select:invalid {
+    border-color: #dc3545;
+}
+
+.form-control:valid,
+.form-select:valid {
+    border-color: #28a745;
+}
+
+/* Loading states */
+.btn.loading {
+    position: relative;
+    color: transparent !important;
+}
+
+.btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    margin-left: -10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Modal animations */
+.modal.fade .modal-dialog {
+    transform: translate(0, -50px);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: translate(0, 0);
+}
+
+/* Badge animations */
+.badge {
+    transition: all 0.3s ease;
+}
+
+.badge:hover {
+    transform: scale(1.1);
+}
+
+/* Dropdown animations */
+.dropdown-menu {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .btn-group {
+        flex-wrap: wrap;
+    }
+
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+
+    .modal-dialog {
+        margin: 10px;
+    }
+}
+
+/* Print optimizations */
+/* Modal and SweetAlert2 Layout Shift Prevention */
+body.swal2-shown,
+body.modal-open {
+    padding-right: 0 !important;
+}
+
+html.swal2-shown,
+body.swal2-shown,
+html.modal-open,
+body.modal-open {
+    height: 100% !important;
+    overflow-y: auto !important;
+}
+
+.swal2-container {
+    overflow-y: auto;
+}
+
+@media print {
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+    }
+
+    .table {
+        border-collapse: collapse;
+    }
+
+    .table th,
+    .table td {
+        border: 1px solid #000;
+    }
+}
+
+/* Sidebar and Dashboard Layout Redesign */
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 260px;
+    background-color: #000;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: -260px;
+    /* Initially hidden on all screens */
+    bottom: 0;
+    z-index: 1060;
+    /* High z-index to overlap correctly */
+    padding-top: 0;
+    /* Remove top padding to accommodate branding */
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Instant State: Disable transitions when initializing */
+html.initializing .sidebar,
+html.initializing .main-content {
+    transition: none !important;
+}
+
+/* Sidebar Branding Section */
+.sidebar-branding {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+    background-color: #111;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    height: 80px;
+    min-height: 80px;
+}
+
+.sidebar-brand-group {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    gap: 10px;
+}
+
+.sidebar-brand-group img {
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.pos-label {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #dc3545;
+    letter-spacing: 1px;
+}
+
+.sidebar-toggle.in-sidebar {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    padding: 0;
+    order: -1;
+    /* Ensure it stays on the left */
+}
+
+.sidebar-toggle.in-sidebar:hover {
+    color: #dc3545;
+    background: transparent;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 0;
+    /* No margin by default */
+    padding: 20px;
+    padding-top: 85px;
+    /* Offset for header */
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Active State for Sidebar - Support HTML or Layout class */
+.dashboard-layout.sidebar-active .sidebar,
+html.sidebar-active .sidebar {
+    left: 0;
+}
+
+@media (min-width: 992px) {
+
+    .dashboard-layout.sidebar-active .main-content,
+    html.sidebar-active .main-content {
+        margin-left: 260px;
+    }
+}
+
+.sidebar-nav {
+    padding: 10px 0;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 25px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+.sidebar-link:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-link.active {
+    color: white;
+    background-color: rgba(220, 53, 69, 0.15);
+    /* Maroon tint */
+    border-left-color: #dc3545;
+    /* Maroon accent */
+}
+
+.sidebar-link i {
+    width: 25px;
+    font-size: 1.1rem;
+    margin-right: 15px;
+    text-align: center;
+}
+
+.sidebar-divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 15px 25px;
+}
+
+.sidebar-section-title {
+    padding: 10px 25px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 1px;
+}
+
+.sidebar-submenu {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-submenu .sidebar-link {
+    padding-left: 55px;
+    font-size: 0.85rem;
+}
+
+.sidebar-link[data-bs-toggle="collapse"]::after {
+    display: inline-block;
+    margin-left: auto;
+    vertical-align: 0.255em;
+    content: "";
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-bottom: 0;
+    border-left: 0.3em solid transparent;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-link[aria-expanded="true"]::after {
+    transform: rotate(180deg);
+}
+
+/* Responsive Sidebar - Handled by .sidebar-active class */
+@media (max-width: 991.98px) {
+    .sidebar {
+        z-index: 1060;
+        /* Higher on mobile to overlap everything */
+    }
+
+    .dashboard-layout.sidebar-active .sidebar {
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+    }
+}
+
+/* Sidebar Toggle Button - Always Visible */
+.sidebar-toggle {
+    display: block;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 1.2rem;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.sidebar-toggle:active {
+    transform: scale(0.95);
+}

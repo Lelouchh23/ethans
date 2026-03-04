@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - Restaurant POS</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="staff.css">
+    <script>
+        // Immediate Sidebar State Initialization
+        (function () {
+            const html = document.documentElement;
+            html.classList.add('initializing');
+
+            const sidebarState = localStorage.getItem('sidebarActive');
+            if (sidebarState === 'true' && window.innerWidth >= 992) {
+                html.classList.add('sidebar-active');
+            }
+
+            // Auth Guard (Staff version)
+            try {
+                const role = localStorage.getItem('loggedInRole');
+                if (role !== 'staff' && role !== 'cashier') {
+                    window.location.href = 'index.html';
+                }
+            } catch (e) {
+                window.location.href = 'index.html';
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top shadow">
+        <div class="container-fluid">
+            <!-- Sidebar Toggle (Mobile) -->
+            <button class="sidebar-toggle mt-1 me-2" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Mobile User Menu Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headerNav">
+                <span class="fas fa-ellipsis-v"></span>
+            </button>
+
+            <!-- Nav Items -->
+            <div class="collapse navbar-collapse" id="headerNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- User Dropdown (Preserved in Header) -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>Staff Member
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 animate__animated animate__fadeIn">
+                            <li><a class="dropdown-item" href="#" data-page="account"><i
+                                        class="fas fa-user-cog me-2 text-maroon"></i>Account</a></li>
+                            <li><a class="dropdown-item" href="#" data-page="activity-log"><i
+                                        class="fas fa-history me-2 text-maroon"></i>Activity Log</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="#" id="logoutBtn"><i
+                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-branding">
+                <button class="sidebar-toggle in-sidebar" id="sidebarToggleInternal">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="staff-dashboard.html" class="sidebar-brand-group">
+                    <img src="resources/ethans logo.jpg" alt="Logo">
+                    <span class="pos-label">POS</span>
+                </a>
+            </div>
+            <div class="sidebar-nav">
+                <div class="sidebar-section-title">Operations</div>
+                <a href="#" class="sidebar-link active" data-page="menu">
+                    <i class="fas fa-utensils"></i>Menu Sales
+                </a>
+                <!-- Ingredients link removed -->
+                <a href="#" class="sidebar-link" data-page="receipts">
+                    <i class="fas fa-receipt"></i>Receipts
+                </a>
+
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-section-title">Account</div>
+                <a href="#" class="sidebar-link" data-page="account">
+                    <i class="fas fa-user-cog"></i>Account Settings
+                </a>
+                <a href="#" class="sidebar-link" data-page="activity-log">
+                    <i class="fas fa-history"></i>My Activity
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Menu Sales Content (Default for Staff) -->
+            <div id="menu-content" class="page-content">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-utensils me-2 text-maroon"></i>Menu Sales</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button class="btn btn-sm btn-outline-maroon" id="startNewSale">
+                                <i class="fas fa-plus-circle"></i> New Sale
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control" id="menuSearch" placeholder="Search menu items...">
+                            <button class="btn btn-outline-maroon" id="clearSearch">Clear</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <select class="form-select" id="menuCategoryFilter">
+                            <option value="">All Categories</option>
+                            <option value="Main Course">Main Course</option>
+                            <option value="Appetizer">Appetizer</option>
+                            <option value="Side Dish">Side Dish</option>
+                            <option value="Dessert">Dessert</option>
+                            <option value="Beverage">Beverage</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Menu Items Grid -->
+                <div class="row" id="menuItemsGrid">
+                    <div class="col-12 text-center py-5">
+                        <div class="loading-spinner"></div>
+                        <p class="mt-2">Loading menu items...</p>
+                    </div>
+                </div>
+
+                <!-- Current Sale -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card shadow">
+                            <div class="card-header bg-black text-white">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-shopping-cart me-1"></i>Current Sale
+                                    <span id="saleStatus" class="badge bg-warning ms-2">No active sale</span>
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="saleItems">
+                                    <p class="text-muted text-center py-3">No items added to sale yet. Select items
+                                        from the menu above.</p>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <strong>Total Items:</strong> <span id="totalItemsCount">0</span>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-maroon" id="recordSaleBtn" disabled>
+                                            <i class="fas fa-check-circle me-1"></i> Record Sale
+                                        </button>
+                                        <button class="btn btn-outline-secondary ms-2" id="clearSaleBtn">
+                                            <i class="fas fa-times-circle me-1"></i> Clear
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ingredients content removed -->
+
+            <!-- Receipts Content (Hidden by default) -->
+            <div id="receipts-content" class="page-content d-none">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-receipt me-2 text-maroon"></i>Receipts</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="text-muted small">
+                            <i class="fas fa-info-circle me-1"></i>Proof of order only (not payment)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Receipt Preview -->
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card shadow mb-4">
+                            <div class="card-header bg-black text-white">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-print me-1"></i>Receipt Preview
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="receipt-container bg-light p-4 border" id="receiptPreview">
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">No receipt selected</p>
+                                        <p class="small">Select a receipt from the list to preview</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 d-flex justify-content-between">
+                                    <button class="btn btn-maroon" id="printReceiptBtn" disabled>
+                                        <i class="fas fa-print me-1"></i> Print Receipt
+                                    </button>
+                                    <button class="btn btn-green" id="newSaleFromReceiptBtn">
+                                        <i class="fas fa-plus-circle me-1"></i> Start New Sale
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Receipts -->
+                    <div class="col-lg-4">
+                        <div class="card shadow">
+                            <div class="card-header bg-black text-white">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-history me-1"></i>Recent Receipts
+                                </h6>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush" id="recentReceipts">
+                                    <div class="list-group-item text-center py-4 text-muted">
+                                        <i class="fas fa-receipt fa-2x mb-2"></i>
+                                        <p>No receipts found</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Settings Content (Hidden by default) -->
+            <div id="account-content" class="page-content d-none">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-user-cog me-2 text-maroon"></i>Account Settings</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="text-muted small">
+                            <i class="fas fa-info-circle me-1"></i>Personal access control only
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header bg-black text-white">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-user me-1"></i>Account Information
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <form id="accountInfoForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" id="accFullName"
+                                            placeholder="Loading..." required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="accUsername"
+                                            placeholder="Loading..." required readonly disabled>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Current Role</label>
+                                        <input type="text" class="form-control" id="currentRole" value="Staff" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Request Role Change To</label>
+                                        <select class="form-select" id="requestRoleChange">
+                                            <option value="">No Change</option>
+                                            <option value="Senior Staff">Senior Staff</option>
+                                            <option value="Cashier">Cashier</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Account Status</label>
+                                        <input type="text" class="form-control" id="accountStatus" value="Active"
+                                            readonly>
+                                    </div>
+                                    <button type="submit" class="btn btn-maroon" id="saveAccountInfoBtn">
+                                        <i class="fas fa-save me-1"></i> Save Changes
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header bg-black text-white">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-lock me-1"></i>Change Password
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <form id="changePasswordForm">
+                                    <div class="mb-3">
+                                        <label for="currentPassword" class="form-label">Current Password</label>
+                                        <input type="password" class="form-control" id="currentPassword" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="newPassword" class="form-label">New Password</label>
+                                        <input type="password" class="form-control" id="newPassword" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirmNewPassword" class="form-label">Confirm New
+                                            Password</label>
+                                        <input type="password" class="form-control" id="confirmNewPassword" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-maroon">
+                                        <i class="fas fa-key me-1"></i> Change Password
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Logout Card -->
+                        <div class="card shadow">
+                            <div class="card-body text-center">
+                                <button class="btn btn-outline-danger" id="logoutBtnAccount">
+                                    <i class="fas fa-sign-out-alt me-1"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Log Content (Hidden by default) -->
+            <div id="activity-log-content" class="page-content d-none">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-history me-2 text-maroon"></i>Activity Log</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="text-muted small">
+                            <i class="fas fa-info-circle me-1"></i>Read-only • Own activity only
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card shadow">
+                            <div
+                                class="card-header bg-black text-white d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-list-alt me-1"></i>My Activity Log
+                                </h6>
+                                <div class="text-muted small">
+                                    <i class="fas fa-user me-1"></i>Showing actions by: <span
+                                        id="profActivityName">Staff Member</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="activityLogTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Date & Time</th>
+                                                <th>Action Performed</th>
+                                                <th>Reference</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="4" class="text-center">Loading activity log...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="alert alert-info mt-3">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Note:</strong> This log shows ONLY actions done by you (the logged-in
+                                    staff). You cannot see other staff activity, owner/admin actions, system
+                                    configuration logs, or edit/delete logs.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Ingredient modals removed -->
+
+    <!-- Notification Modal -->
+    <div class="modal fade" id="notificationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" id="notificationModalHeader">
+                    <h5 class="modal-title" id="notificationModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="notificationModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="notificationModalConfirm"
+                        style="display: none;">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery for AJAX -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- SweetAlert2 for nicer alerts and confirmations -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Custom JS -->
+    <script src="main.js"></script>
+    <script src="staff.js"></script>
+
+    <script>
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set Menu Sales as active page by default
+            updateActivePage('menu');
+
+            // Load menu items
+            loadMenuItems();
+
+            // Navigation handling
+            document.querySelectorAll('[data-page]').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    updateActivePage(page);
+
+                    // Auto-close sidebar on mobile after selection
+                    if (window.innerWidth < 992) {
+                        const layout = document.querySelector('.dashboard-layout');
+                        if (layout) layout.classList.remove('sidebar-active');
+                    }
+                });
+            });
+
+            // Logout buttons are now handled in staff.js with proper activity logging
+
+            // Start new sale from receipts logic is handled in staff.js
+
+            // Search and filter for menu
+            document.getElementById('menuSearch').addEventListener('input', function () {
+                filterMenuItems();
+            });
+
+            document.getElementById('menuCategoryFilter').addEventListener('change', function () {
+                filterMenuItems();
+            });
+
+            document.getElementById('clearSearch').addEventListener('click', function () {
+                document.getElementById('menuSearch').value = '';
+                filterMenuItems();
+            });
+
+            // Ingredients search/filter removed
+
+            // Account info form
+            document.getElementById('saveAccountInfoBtn').addEventListener('click', function (e) {
+                e.preventDefault();
+                saveAccountInfo();
+            });
+        });
+
+        function updateActivePage(page) {
+            // Hide all page contents
+            document.querySelectorAll('.page-content').forEach(content => {
+                content.classList.add('d-none');
+                content.classList.remove('animate__fadeIn');
+            });
+
+            // Show selected page content
+            const pageContent = document.getElementById(`${page}-content`);
+            if (pageContent) {
+                pageContent.classList.remove('d-none');
+                pageContent.classList.add('animate__animated', 'animate__fadeIn');
+
+                // Load page-specific data
+                switch (page) {
+                    case 'dashboard':
+                        loadDashboardData();
+                        break;
+                    case 'menu':
+                        loadMenuItems();
+                        break;
+                    case 'ingredients':
+                        loadIngredients();
+                        break;
+                    case 'receipts':
+                        loadRecentReceipts();
+                        break;
+                    case 'account':
+                        loadAccountInfo();
+                        break;
+                    case 'activity-log':
+                        loadActivityLog();
+                        break;
+                }
+            }
+
+            // Update active state for sidebar links
+            document.querySelectorAll('.sidebar-link').forEach(el => {
+                el.classList.remove('active');
+            });
+            const activeSidebarLink = document.querySelector(`.sidebar-link[data-page="${page}"]`);
+            if (activeSidebarLink) {
+                activeSidebarLink.classList.add('active');
+            }
+
+            // Update active nav link (dropdown items)
+            document.querySelectorAll('.nav-link, .dropdown-item').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            document.querySelectorAll(`[data-page="${page}"]`).forEach(link => {
+                link.classList.add('active');
+            });
+        }
+
+        function loadDashboardData() {
+            // Simulate AJAX loading
+            setTimeout(() => {
+                // Update info boxes
+                document.getElementById('totalOrders').textContent = '24';
+                document.getElementById('totalSales').textContent = '18';
+                document.getElementById('lowStock').textContent = '3';
+                document.getElementById('availableIngredients').textContent = '42';
+
+                // Populate ingredient table
+                const ingredientData = [
+                    { name: 'Beef', category: 'Meat', quantity: '15 kg', status: 'Normal' },
+                    { name: 'Chicken', category: 'Meat', quantity: '8 kg', status: 'Low' },
+                    { name: 'Rice', category: 'Grains', quantity: '25 kg', status: 'Normal' },
+                    { name: 'Tomatoes', category: 'Vegetables', quantity: '5 kg', status: 'Normal' },
+                    { name: 'Onions', category: 'Vegetables', quantity: '3 kg', status: 'Low' },
+                    { name: 'Garlic', category: 'Spices', quantity: '2 kg', status: 'Normal' }
+                ];
+
+                const ingredientTable = document.getElementById('ingredientTable').getElementsByTagName('tbody')[0];
+                ingredientTable.innerHTML = '';
+
+                ingredientData.forEach(item => {
+                    const row = ingredientTable.insertRow();
+                    row.innerHTML = `
+                        <td>${item.name}</td>
+                        <td><span class="badge bg-secondary">${item.category}</span></td>
+                        <td>${item.quantity}</td>
+                        <td><span class="badge ${item.status === 'Normal' ? 'bg-success' : 'bg-warning'}">${item.status}</span></td>
+                    `;
+                });
+
+                // Populate best selling table
+                const bestSellingData = [
+                    { item: 'Beef Steak', quantity: 12 },
+                    { item: 'Chicken Curry', quantity: 10 },
+                    { item: 'Vegetable Salad', quantity: 8 },
+                    { item: 'Garlic Bread', quantity: 6 },
+                    { item: 'French Fries', quantity: 5 }
+                ];
+
+                const bestSellingTable = document.getElementById('bestSellingTable').getElementsByTagName('tbody')[0];
+                bestSellingTable.innerHTML = '';
+
+                bestSellingData.forEach(item => {
+                    const row = bestSellingTable.insertRow();
+                    row.innerHTML = `
+                        <td>${item.item}</td>
+                        <td><span class="badge bg-maroon">${item.quantity}</span></td>
+                    `;
+                });
+            }, 500);
+        }
+
+        function loadAccountInfo() {
+            // Simulate loading account info
+            setTimeout(() => {
+                // In real app, this would come from server
+                const accountInfo = {
+                    fullName: 'John Doe',
+                    username: 'johndoe',
+                    role: 'Staff',
+                    status: 'Active'
+                };
+
+                document.getElementById('staffFullName').value = accountInfo.fullName;
+                document.getElementById('staffUsername').value = accountInfo.username;
+                document.getElementById('currentRole').value = accountInfo.role;
+                document.getElementById('accountStatus').value = accountInfo.status;
+            }, 300);
+        }
+
+        function saveAccountInfo() {
+            const fullName = document.getElementById('staffFullName').value;
+            const username = document.getElementById('staffUsername').value;
+            const roleChange = document.getElementById('requestRoleChange').value;
+
+            if (!fullName || !username) {
+                showModalNotification('Please fill in all required fields', 'warning');
+                return;
+            }
+
+            // Simulate saving
+            setTimeout(() => {
+                if (roleChange) {
+                    showModalNotification('Account information saved. Role change request submitted for approval.', 'success');
+                } else {
+                    showModalNotification('Account information saved successfully', 'success');
+                }
+            }, 1000);
+        }
+
+        function filterMenuItems() {
+            const searchTerm = document.getElementById('menuSearch').value.toLowerCase();
+            const categoryFilter = document.getElementById('menuCategoryFilter').value;
+
+            // This would filter the actual menu items in a real app
+            console.log('Filtering menu items:', { searchTerm, categoryFilter });
+        }
+
+        function filterIngredients() {
+            const searchTerm = document.getElementById('ingredientSearch').value.toLowerCase();
+            const categoryFilter = document.getElementById('ingredientCategoryFilter').value;
+
+            // This would filter the actual ingredients in a real app
+            console.log('Filtering ingredients:', { searchTerm, categoryFilter });
+        }
+
+        function showModalNotification(message, type = 'info', title = 'Notification') {
+            const modalHeader = document.getElementById('notificationModalHeader');
+            const modalTitle = document.getElementById('notificationModalTitle');
+            const modalBody = document.getElementById('notificationModalBody');
+
+            // Set modal color based on type
+            let headerClass = 'bg-primary text-white';
+            switch (type) {
+                case 'success':
+                    headerClass = 'bg-success text-white';
+                    break;
+                case 'warning':
+                    headerClass = 'bg-warning text-dark';
+                    break;
+                case 'danger':
+                    headerClass = 'bg-danger text-white';
+                    break;
+                case 'info':
+                    headerClass = 'bg-info text-white';
+                    break;
+            }
+
+            modalHeader.className = `modal-header ${headerClass}`;
+            modalTitle.textContent = title;
+            modalBody.textContent = message;
+
+            // Hide confirm button for regular notifications
+            document.getElementById('notificationModalConfirm').style.display = 'none';
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('notificationModal'));
+            modal.show();
+        }
+    </script>
+</body>
+
+</html>

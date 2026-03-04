@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Sales - Staff Dashboard</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="staff.css">
+    <script>
+        // Immediate Sidebar State Initialization
+        (function () {
+            const html = document.documentElement;
+            html.classList.add('initializing');
+
+            const sidebarState = localStorage.getItem('sidebarActive');
+            if (sidebarState === 'true' && window.innerWidth >= 992) {
+                html.classList.add('sidebar-active');
+            }
+
+            // Auth Guard (Staff/Cashier version)
+            try {
+                const role = localStorage.getItem('loggedInRole');
+                if (role !== 'staff' && role !== 'cashier') {
+                    window.location.href = 'index.html';
+                }
+            } catch (e) {
+                window.location.href = 'index.html';
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top shadow">
+        <div class="container-fluid">
+            <!-- Sidebar Toggle (Mobile) -->
+            <button class="sidebar-toggle mt-1 me-2" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Logo -->
+
+
+            <!-- Mobile User Menu Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headerNav">
+                <span class="fas fa-ellipsis-v"></span>
+            </button>
+
+            <!-- Nav Items -->
+            <div class="collapse navbar-collapse" id="headerNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- User Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>John Doe
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 animate__animated animate__fadeIn">
+                            <li><a class="dropdown-item" href="staff-account.html"><i
+                                        class="fas fa-user-cog me-2 text-maroon"></i>Account</a></li>
+                            <li><a class="dropdown-item" href="staff-activity.html"><i
+                                        class="fas fa-history me-2 text-maroon"></i>Activity Log</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="#" id="logoutBtn"><i
+                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-branding">
+                <button class="sidebar-toggle in-sidebar" id="sidebarToggleInternal">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="staff-dashboard.html" class="sidebar-brand-group">
+                    <img src="resources/ethans logo.jpg" alt="Logo">
+                    <span class="pos-label">POS</span>
+                </a>
+            </div>
+            <div class="sidebar-nav">
+                <div class="sidebar-section-title">Operations</div>
+                <a href="staff-menu.html" class="sidebar-link active">
+                    <i class="fas fa-utensils"></i>Menu Sales
+                </a>
+                <a href="staff-held-orders.html" class="sidebar-link">
+                    <i class="fas fa-pause-circle"></i>Held Orders
+                </a>
+                <!-- Ingredients link removed -->
+                <a href="staff-receipts.html" class="sidebar-link">
+                    <i class="fas fa-receipt"></i>Receipts
+                </a>
+
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-section-title">Account</div>
+                <a href="staff-account.html" class="sidebar-link">
+                    <i class="fas fa-user-cog"></i>Account Settings
+                </a>
+                <a href="staff-activity.html" class="sidebar-link">
+                    <i class="fas fa-history"></i>My Activity
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Menu Sales Content -->
+            <div id="menu-content" class="page-content h-100">
+                <div class="row g-0 h-100">
+                    <!-- Left Section: Categories and Products -->
+                    <div class="col-lg-8 col-md-7 d-flex flex-column border-end overflow-hidden"
+                        style="height: calc(100vh - 80px);">
+                        <!-- Categories Header -->
+                        <div class="p-3 bg-light border-bottom">
+                            <div class="d-flex align-items-center mb-3">
+                                <h1 class="h4 mb-0 me-4"><i class="fas fa-utensils me-2 text-maroon"></i>Menu Sales</h1>
+                                <div class="input-group search-pos">
+                                    <span class="input-group-text bg-white border-end-0"><i
+                                            class="fas fa-search text-muted"></i></span>
+                                    <input type="text" class="form-control border-start-0 ps-0" id="menuSearch"
+                                        placeholder="Search menu items or scan barcode...">
+                                </div>
+                            </div>
+                            <!-- Category Tabs -->
+                            <div class="category-tabs-container">
+                                <div class="category-tabs d-flex gap-2 overflow-auto pb-1" id="categoryTabs">
+                                    <button class="btn btn-category active" data-category="All">All Products</button>
+                                    <button class="btn btn-category" data-category="Main Course">Main Course</button>
+                                    <button class="btn btn-category" data-category="Appetizer">Appetizer</button>
+                                    <button class="btn btn-category" data-category="Dessert">Dessert</button>
+                                    <button class="btn btn-category" data-category="Beverage">Drinks</button>
+                                    <button class="btn btn-category" data-category="Side Dish">Side Dish</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Menu Items Grid -->
+                        <div class="flex-grow-1 overflow-auto p-3 bg-white" id="menuItemsGridContainer">
+                            <div class="row g-3" id="menuItemsGrid">
+                                <!-- Items will be dynamically loaded here -->
+                                <div class="col-12 text-center py-5">
+                                    <div class="loading-spinner"></div>
+                                    <p class="mt-2">Loading inventory...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Section: Cart Sidebar -->
+                    <div class="col-lg-4 col-md-5 d-flex flex-column bg-white shadow-sm"
+                        style="height: calc(100vh - 80px);">
+                        <!-- Cart Header -->
+                        <div class="p-3 bg-black text-white">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <h6 class="mb-0 fw-bold"><i class="fas fa-shopping-cart me-2"></i>Cart Details (<span
+                                        id="cartCount">0</span>)</h6>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-sm btn-outline-light" id="printerSetupBtn" title="Printer Setup">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-light" id="clearSaleBtn" title="Clear Cart">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="small opacity-75">
+                                    <i class="fas fa-user-circle me-1"></i> <span
+                                        class="customer-name-display text-danger fw-bold">Walk-in Customer</span>
+                                </div>
+                                <!-- Order Type Toggle -->
+                                <div class="btn-group btn-group-sm" role="group" id="orderTypeToggle">
+                                    <input type="radio" class="btn-check" name="orderType" id="orderTypeDineIn" value="dine-in" autocomplete="off">
+                                    <label class="btn btn-outline-warning btn-sm py-0 px-2" for="orderTypeDineIn"><i class="fas fa-chair me-1"></i>Dine-in</label>
+                                    
+                                    <input type="radio" class="btn-check" name="orderType" id="orderTypeWalkIn" value="walk-in" autocomplete="off" checked>
+                                    <label class="btn btn-outline-warning btn-sm py-0 px-2" for="orderTypeWalkIn"><i class="fas fa-walking me-1"></i>Walk-in</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cart Items List -->
+                        <div class="flex-grow-1 overflow-auto p-2" id="cartItemsList">
+                            <div class="text-center py-5 empty-cart-msg">
+                                <i class="fas fa-cart-plus fa-3x text-light mb-3" style="color: #eee !important;"></i>
+                                <p class="text-muted">No items added to sale yet.</p>
+                            </div>
+                        </div>
+
+                        <!-- Price Section -->
+                        <div class="p-3 border-top bg-light">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Sub-total</span>
+                                <span class="fw-bold" id="cartSubtotal">P0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Taxes (12%)</span>
+                                <span class="fw-bold" id="cartTaxes">P0.00</span>
+                            </div>
+                            <hr class="my-2">
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="h5 fw-bold mb-0">Total</span>
+                                <span class="h5 fw-bold mb-0 text-maroon" id="cartTotal">P0.00</span>
+                            </div>
+
+                            <!-- POS Action Buttons -->
+                            <div class="pos-actions grid gap-2">
+                                <button class="btn btn-outline-dark w-100 mb-2" id="selectCustomerBtn">
+                                    <i class="fas fa-user-plus me-2"></i>Select Customer
+                                </button>
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <button class="btn btn-outline-danger w-100" id="discountBtn">
+                                            <i class="fas fa-minus-circle me-1"></i>Discount
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button class="btn btn-outline-primary w-100" id="couponBtn">
+                                            <i class="fas fa-tag me-1"></i>Coupon
+                                        </button>
+                                    </div>
+                                </div>
+                                <button class="btn btn-maroon btn-lg w-100 mb-2 py-3 fw-bold shadow-sm" id="checkoutBtn"
+                                    disabled>
+                                    <i class="fas fa-cash-register me-2"></i>CHECKOUT
+                                </button>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <button class="btn btn-warning w-100 text-white" id="holdOrderBtn">
+                                            <i class="fas fa-pause-circle me-1"></i>Hold Order
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button class="btn btn-secondary w-100" id="returnOrderBtn">
+                                            <i class="fas fa-reply me-1"></i>Return
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Modal -->
+    <div class="modal fade" id="notificationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" id="notificationModalHeader">
+                    <h5 class="modal-title" id="notificationModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="notificationModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="notificationModalConfirm"
+                        style="display: none;">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery for AJAX -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- SweetAlert2 for nicer alerts and confirmations -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Custom JS -->
+    <script src="main.js"></script>
+    <script src="staff.js"></script>
+
+    <script>
+        // Centralized logic handles these features
+    </script>
+</body>
+
+</html>

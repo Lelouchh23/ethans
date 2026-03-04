@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Requests - Admin Dashboard</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+    <script>
+        // Immediate Sidebar State Initialization
+        (function () {
+            const html = document.documentElement;
+            html.classList.add('initializing');
+
+            const sidebarState = localStorage.getItem('sidebarActive');
+            if (sidebarState === 'true' && window.innerWidth >= 992) {
+                html.classList.add('sidebar-active');
+            }
+
+            // Auth Guard
+            try {
+                const role = localStorage.getItem('loggedInRole');
+                if (role !== 'admin' && role !== 'owner') {
+                    window.location.href = 'index.html';
+                }
+            } catch (e) {
+                window.location.href = 'index.html';
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top shadow">
+        <div class="container-fluid">
+            <button class="sidebar-toggle mt-1 me-2" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headerNav">
+                <span class="fas fa-ellipsis-v"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="headerNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-shield me-1"></i>Administrator
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 animate__animated animate__fadeIn">
+                            <li><a class="dropdown-item" href="admin-system-settings.html"><i
+                                        class="fas fa-cog me-2 text-danger"></i>Settings</a></li>
+                            <li><a class="dropdown-item" href="admin-activity-log.html"><i
+                                        class="fas fa-history me-2 text-danger"></i>Activity Log</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="#" id="logoutBtn"><i
+                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-branding">
+                <button class="sidebar-toggle in-sidebar" id="sidebarToggleInternal">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="admin-dashboard.html" class="sidebar-brand-group">
+                    <img src="resources/ethans logo.jpg" alt="Logo">
+                    <span class="pos-label">POS</span>
+                </a>
+            </div>
+            <div class="sidebar-nav">
+                <div class="sidebar-section-title">Navigation</div>
+                <a href="admin-dashboard.html" class="sidebar-link">
+                    <i class="fas fa-tachometer-alt"></i>Dashboard
+                </a>
+                <a href="admin-menu-control.html" class="sidebar-link">
+                    <i class="fas fa-utensils"></i>Menu Control
+                </a>
+                <a href="admin-recipe-control.html" class="sidebar-link">
+                    <i class="fas fa-book"></i>Recipe Control
+                </a>
+                <a href="admin-ingredients-masterlist.html" class="sidebar-link">
+                    <i class="fas fa-boxes"></i>Ingredients
+                </a>
+                <a href="admin-menu_customization.html" class="sidebar-link">
+                    <i class="fas fa-palette"></i>Menu Customization
+                </a>
+                <a href="admin-user-management.html" class="sidebar-link">
+                    <i class="fas fa-users"></i>Users
+                </a>
+                <a href="admin-requests.html" class="sidebar-link active">
+                    <i class="fas fa-inbox"></i>Requests
+                </a>
+
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-section-title">Reports & Data</div>
+                <a href="admin-reports.html" class="sidebar-link">
+                    <i class="fas fa-chart-bar"></i>Owner and Reports
+                </a>
+                <a href="admin-backup.html" class="sidebar-link">
+                    <i class="fas fa-database"></i>Backup & Restore
+                </a>
+
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-section-title">System</div>
+                <a href="admin-system-settings.html" class="sidebar-link">
+                    <i class="fas fa-cog"></i>System Settings
+                </a>
+                <a href="admin-activity-log.html" class="sidebar-link">
+                    <i class="fas fa-history"></i>Full Activity Log
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Requests Content -->
+            <div id="requests-content" class="page-content">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-inbox me-2 text-danger"></i>Incoming Requests</h1>
+
+                </div>
+
+                <!-- Request Filters -->
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-4 mb-2 mb-md-0">
+                                <select class="form-select" id="requestStatusFilter">
+                                    <option value="Pending">Show Pending Only</option>
+                                    <option value="All">All Statuses</option>
+                                    <option value="Approved">Approved Only</option>
+                                    <option value="Denied">Denied Only</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5 mb-2 mb-md-0">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    <input type="text" class="form-control" id="requestSearch"
+                                        placeholder="Search by staff or item...">
+                                </div>
+                            </div>
+                            <div class="col-md-3 text-end">
+                                <span class="badge bg-danger rounded-pill px-3 py-2" id="pendingRequestsBadge">0 Pending
+                                    Requests</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabbed Tables -->
+                <div class="card shadow">
+                    <div class="card-header bg-black text-white px-3">
+                        <ul class="nav nav-tabs card-header-tabs" id="requestsTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active text-dark" id="requests-tab" data-bs-toggle="tab" data-bs-target="#requests-panel" type="button" role="tab">
+                                    <i class="fas fa-list-alt me-1"></i>Staff Requests <span class="badge bg-warning text-dark ms-1" id="requestsCountBadge">0</span>
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link text-danger" id="locked-tab" data-bs-toggle="tab" data-bs-target="#locked-panel" type="button" role="tab">
+                                    <i class="fas fa-lock me-1"></i>Locked Accounts <span class="badge bg-danger ms-1" id="lockedCountBadge">0</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="requestsTabsContent">
+                            <!-- Staff Requests Tab -->
+                            <div class="tab-pane fade show active" id="requests-panel" role="tabpanel">
+                                <div class="table-responsive scroll-container">
+                                    <table class="table table-hover align-middle" id="requestsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Staff Name</th>
+                                                <th>Request Type</th>
+                                                <th>Action/Target</th>
+                                                <th>Details</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="7" class="text-center">Loading requests...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Locked Accounts Tab -->
+                            <div class="tab-pane fade" id="locked-panel" role="tabpanel">
+                                <div class="alert alert-info mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Accounts below were locked after 5 failed login attempts. Unlock them to allow the user to login again.
+                                    <button class="btn btn-sm btn-outline-primary float-end" id="refreshLockedAccounts">
+                                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle" id="lockedAccountsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Username</th>
+                                                <th>Full Name</th>
+                                                <th>Role</th>
+                                                <th>Locked At</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="5" class="text-center py-3">
+                                                    <i class="fas fa-spinner fa-spin me-2"></i>Loading locked accounts...
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Custom JS -->
+    <script src="main.js"></script>
+    <script src="admin.js"></script>
+
+    <script>
+        // Use standard loadRequests() from admin.js
+
+        // Locked Accounts Management
+        async function loadLockedAccounts() {
+            const tbody = document.querySelector('#lockedAccountsTable tbody');
+            try {
+                const response = await fetch('php/account_lockout.php?action=list');
+                const data = await response.json();
+                
+                // Update badge count
+                const lockedCount = data.accounts?.length || 0;
+                const lockedBadge = document.getElementById('lockedCountBadge');
+                if (lockedBadge) lockedBadge.textContent = lockedCount;
+                
+                if (!data.success || !data.accounts || data.accounts.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-success py-3">
+                        <i class="fas fa-check-circle me-2"></i>No locked accounts
+                    </td></tr>`;
+                    return;
+                }
+                
+                tbody.innerHTML = data.accounts.map(account => `
+                    <tr>
+                        <td><strong>${account.username || 'N/A'}</strong></td>
+                        <td>${account.full_name || 'N/A'}</td>
+                        <td><span class="badge bg-secondary">${account.role_name || 'N/A'}</span></td>
+                        <td>${new Date(account.lockout_at).toLocaleString()}</td>
+                        <td>
+                            <button class="btn btn-sm btn-success" onclick="unlockAccount(${account.user_id}, '${account.username}')">
+                                <i class="fas fa-unlock me-1"></i>Unlock
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading locked accounts:', error);
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-3">
+                    <i class="fas fa-exclamation-circle me-2"></i>Error loading locked accounts
+                </td></tr>`;
+            }
+        }
+
+        async function unlockAccount(userId, username) {
+            const result = await Swal.fire({
+                title: 'Unlock Account?',
+                html: `<p>Are you sure you want to unlock <strong>${username}</strong>?</p><p class="text-muted small">They will be able to login again.</p>`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Unlock',
+                confirmButtonColor: '#28a745',
+                cancelButtonText: 'Cancel'
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const response = await fetch('php/account_lockout.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'unlock', user_id: userId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Account Unlocked',
+                        text: `${username} can now login again.`,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    loadLockedAccounts();
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to unlock account', 'error');
+                }
+            } catch (error) {
+                console.error('Error unlocking account:', error);
+                Swal.fire('Error', 'Failed to unlock account', 'error');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLockedAccounts();
+            
+            document.getElementById('refreshLockedAccounts')?.addEventListener('click', loadLockedAccounts);
+        });
+    </script>
+</body>
+
+</html>
